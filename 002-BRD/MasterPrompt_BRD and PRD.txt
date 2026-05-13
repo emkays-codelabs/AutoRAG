@@ -1,0 +1,506 @@
+---
+
+# AutoRAG — Master Document Generation Prompt
+## Euron AI Product Engineering 2.0
+
+---
+
+## PROJECT CONTEXT
+
+**Project Name:** AutoRAG — Self-Improving RAG Platform with Autonomous Knowledge Compression
+**Organisation:** Euron AI Product Engineering 2.0
+**Output:** Two separate enterprise-grade Microsoft Word documents (.docx)
+- `AutoRAG_BRD_Final.docx` — Business Requirements Document (~12 pages)
+- `AutoRAG_PRD_Final.docx` — Product Requirements Document (~32 pages)
+
+---
+
+## SOURCE MATERIALS
+
+Use ALL of the following as content sources:
+
+1. `AutoRAG-BRD-v1_0-Content.docx` — Original BRD content (raw)
+2. `AutoRAG-PRD-v1_0-Content.docx` — Original PRD content (raw)
+3. `AutoRAG_Vision_Deck.pdf` — 10-slide project vision deck
+4. `AutoRAG_flow.jpeg` — End-to-end platform flow diagram (use in architecture sections)
+5. `Product_comparision.jpeg` — Feature & Capability Comparison table vs competitors (use in Competitive Landscape)
+6. `BRD_PRD_Prompt.txt` — Original formatting instructions
+
+---
+
+## GLOBAL DOCUMENT STANDARDS
+
+### Page Setup
+- Paper: US Letter (8.5" × 11")
+- Orientation: **Portrait** — explicitly set `orientation: PageOrientation.PORTRAIT` on ALL sections including cover
+- Margins: Cover page = 0 on all sides; Content pages = 1080 DXA (0.75") on all sides
+- Page size in DXA: `width: 12240, height: 15840`
+
+### Brand Palette
+```
+Purple:    #5B21B6   (primary — H1 strip fill, H2 text, table headers, borders)
+Navy:      #1E1B4B   (secondary — H3 text, dark callouts, cover background)
+Orange:    #F97316   (accent — H1 left border rule, H2 number prefix, arrows)
+White:     #FFFFFF   (text on purple/navy backgrounds)
+Lavender:  #EDE9FE   (callout box fill)
+Stripe:    #F3F0FF   (alternating table row fill, cover image background)
+Mid Gray:  #E5E7EB   (dividers, footer border)
+Dark Gray: #4B5563   (secondary body text, footnotes, footer text)
+Body:      #1F2937   (primary body text)
+Green:     #166534   (✅ cells, success states)
+Amber:     #92400E   (⚠️ cells, warning states)
+Red:       #991B1B   (❌ cells, error states)
+```
+
+### Typography
+- Font: Calibri throughout
+- Body text: 20pt, color `#1F2937`
+- All content uses Calibri except code/formula blocks which use Courier New
+
+---
+
+## HEADING HIERARCHY & NUMBERING
+
+### H1 — Section heading
+- Format: Purple filled strip (`#5B21B6`), orange left border rule (THICK, 32pt)
+- Text: White, 26pt, bold
+- Numbering: `01`, `02`, `03` ... (zero-padded two digits)
+- Example rendered: `01   Executive Summary`
+- Spacing: 320 before, 160 after
+- Indent: left 180 DXA, right 180 DXA (the strip is inset; body text aligns to page margin — NOT to the strip)
+
+### H2 — Sub-section heading
+- Format: No background, no border
+- Number prefix: Orange (`#F97316`), 21pt, bold — e.g. `1.1`
+- Title text: Purple (`#5B21B6`), 21pt, bold
+- Spacing: 200 before, 70 after
+- **Body text aligns to page margin (left: 0) — same as H2**
+
+### H3 — Sub-sub-section heading
+- Format: No background, no border
+- Number prefix: Purple (`#5B21B6`), 19pt, bold — e.g. `1.1.1`
+- Title text: Navy (`#1E1B4B`), 19pt, bold
+- Spacing: 140 before, 50 after
+
+### Body Text
+- 20pt Calibri, color `#1F2937`
+- Spacing: 55 before, 75 after
+- **No indent — aligns to page margin, same as H2/H3**
+- Supports mixed rich runs (bold, italic, colored spans) within a single paragraph
+
+### Bullets
+- Symbol: `▸` (U+25B8)
+- Indent: left 520 DXA, hanging 260 DXA
+- Spacing: 45 before, 45 after
+- Support mixed bold/italic spans within a bullet
+
+### Callout Boxes
+- Shading fill: Lavender `#EDE9FE` (default) or Navy `#1E1B4B` (dark variant)
+- Left border: THICK, 24pt, Purple `#5B21B6` (default) or Orange `#F97316` (emphasis)
+- Indent: left 260, right 260
+- Spacing: 130 before, 130 after
+- Text: 20pt, Navy `#1E1B4B` (light) or White `#FFFFFF` (dark)
+
+### Formula Blocks
+- Shading fill: Navy `#1E1B4B`
+- Font: Courier New, 19pt, White, bold
+- Indent: left 200, right 200
+- Spacing: 110 before, 110 after
+
+### Code Blocks
+- Shading fill: `#F3F0FF` (light lavender)
+- Font: Courier New, 18pt, Navy `#1E1B4B`
+- Indent: left 280, right 280
+
+### Footnotes
+- 16pt Calibri, italic, color `#4B5563`
+- Spacing: 50 before, 50 after
+
+### Captions (below images)
+- 17pt Calibri, italic, color `#4B5563`
+- Centred
+- Spacing: 50 before, 160 after
+
+---
+
+## TABLE FORMATTING
+
+- Border: SINGLE, 1pt, `#C4B5FD` (light purple) on all sides
+- Header row fill: `#5B21B6` (purple), text: White, 18pt, bold, centred
+- Odd data rows: White fill
+- Even data rows: `#F3F0FF` (stripe) fill
+- Cell margins: top 82–95, bottom 82–95, left 140, right 140 (DXA)
+- All tables: `alignment: AlignmentType.CENTER`, `width: WidthType.DXA`
+- **Column widths must sum to exactly the total table width**
+- **Set `width` on both the Table AND each TableCell** — required for consistent Word rendering
+- Special cell coloring: ✅ prefix → green text `#166534`; ⚠️ prefix → amber `#92400E`; ❌ prefix → red `#991B1B`
+- Content width for 1080 DXA margins: **9360 DXA total**
+
+---
+
+## HEADER & FOOTER
+
+### Header (all content pages — NOT cover)
+- Left: `AutoRAG` (bold, purple, 19pt) + `  ·  [Document Title]` (navy, 18pt)
+- Right: `Euron AI Product Engineering 2.0` (dark gray, 18pt) — right-aligned via tab stop at 9360
+- Bottom border: SINGLE, 8pt, purple `#5B21B6`
+- Spacing after: 90
+
+### Footer (all content pages — NOT cover)
+- Left: `CONFIDENTIAL` (dark gray, 16pt)
+- Centre: `AutoRAG — [Document Title]  v1.0` (dark gray, 16pt) — tab stop at 4680
+- Right: `Page [PAGE NUMBER]` — tab stop at 9360 — use `SimpleField("PAGE")` for auto page numbers
+- Top border: SINGLE, 4pt, mid gray `#E5E7EB`
+- Spacing before: 75
+
+---
+
+## COVER PAGE
+
+### Layout
+- Section with zero margins, no header/footer
+- Page size: `width: 12240, height: 15840, orientation: PageOrientation.PORTRAIT`
+
+### Structure (top to bottom)
+1. **Navy band** — full width, 6pt height (dark navy `#1E1B4B`)
+2. **Product name** — "AutoRAG", 96pt, bold, white, centred — spacing before: 1800–2000
+3. **Tagline** — "Self-Improving RAG Platform with Autonomous Knowledge Compression", 26pt, colour `#A78BFA` (soft purple), centred
+4. **Document type** — e.g. "Business Requirements Document", 30pt, orange `#F97316`, bold, centred
+5. **Orange accent stripe** — full width, 10pt height
+6. **Cover image** — centred, 640×340px — use generated SVG cover diagram (NOT the complex flow JPEG)
+7. **Version line** — "Version 1.0   |   May 2026   |   CONFIDENTIAL", 21pt, navy, bold, centred
+8. **Subtitle** — "Euron AI Product Engineering 2.0   |   [Distribution note]", 19pt, dark gray, italic, centred
+9. **Navy band** — full width, 10pt height
+
+All bands and background areas use `shading: {fill: COLOR, type: ShadingType.CLEAR}`
+
+---
+
+## GENERATED DIAGRAMS (SVG → PNG at 2× scale via cairosvg)
+
+Generate all 4 diagrams as PNG files before building documents. Embed at the sizes specified.
+
+### 1. Cover Diagram (`cover_diagram.png`) — 640×340 in document
+Dark navy background. Shows the 7-agent closed loop in correct order:
+
+```
+[Ingest] → [Build] → [Evaluate]
+                           ↓
+                       [Observe]
+                           ↓
+[Improve] ← [Diagnose] ←──┘
+    ↓
+[Deploy] → back to Ingest (dashed loop arrow)
+```
+
+- Node fill: Purple `#5B21B6` (all agents except Observe = `#7C3AED`, Deploy = `#F97316`)
+- Arrows: Orange `#F97316` (forward), Purple dashed `#A78BFA` (loop back)
+- Score formula bar at bottom: navy background, white Courier New text
+- Tag line: "CLOSED-LOOP · SELF-IMPROVING · NO MANUAL TUNING"
+
+### 2. Agent Workflow (`agent_workflow.png`) — 580×228 in document
+Light background (`#F8F7FF`). Row 1: Ingest → Build → Evaluate → Observe. Down arrow from Observe. Row 2: Diagnose → Improve → Deploy. Loop arrow back to Ingest. Configurator shown as a dashed-border entry box feeding into Builder.
+
+Caption: *"Figure 1: AutoRAG 7-Agent Closed-Loop Workflow with Pipeline Configurator Entry Point"*
+
+### 3. Score Breakdown (`score_breakdown.png`) — 540×228 in document
+5 component cards side by side: Retrieval (25%), Quality (35%), Faithfulness (25%), Latency (−10%), Cost (−5%). Each card shows weight, plain-English description, target, and a progress bar. Quality card marked "★ HIGHEST WEIGHT". Three threshold bands at bottom: green (≥0.85), amber (0.70–0.84), red (<0.70).
+
+Caption: *"Figure 2: Unified Score Component Breakdown — Weights, Targets, and Quality Thresholds"*
+
+### 4. Approval Framework (`approval_framework.png`) — 540×264 in document
+Decision tree. Top: Improver Agent box → Risk Assessment diamond → three branches: LOW (green, auto-approve → safe deploy), MEDIUM (orange, human review box → approve/reject), HIGH (red, mandatory gate → always routes to human review). Risk legend at bottom. Three coloured output boxes.
+
+Caption: *"Figure 3: Improvement Approval Framework — Risk-Based Decision Tree"*
+
+---
+
+## BRD STRUCTURE (10 sections, ~12 pages)
+
+Number format: `01`, `1.1`, `1.1.1`
+
+```
+01   Executive Summary
+     1.1  Strategic Vision
+     1.2  What AutoRAG Delivers  [table: Capability | Business Outcome]
+
+02   The Problem We Solve
+     2.1  Five Core Pain Points  [table: Pain Point | Reality Today | Business Cost]
+     2.2  Why This Is Solvable Now  [3 bullets]
+
+03   AutoRAG Solution Overview
+     3.1  7-Agent Architecture  [table: Agent | What It Does | Business Value]
+          [Figure 1: Agent Workflow diagram]
+     3.2  Pipeline Configurator — No-Code Setup
+          [table: Question | What the System Derives]
+     3.3  Unified Scoring Formula
+          [formula block]
+          [Figure 2: Score Breakdown diagram]
+          [table: Score Range | Status | System Action]
+     3.4  Rollback Strategy  [3 bullets]
+     3.5  Improvement Approval Framework
+          [table: Mode | When It Applies | What Happens]
+          [Figure 3: Approval Framework diagram]
+
+04   Competitive Landscape
+     [Product_comparision.jpeg — 600×376]
+     4.1  Where Competitors Fall Short  [table: Competitor | Category | Critical Gap | Advantage]
+     4.2  Capability Scorecard  [table: 11 capabilities × 5 competitors]
+
+05   Who Uses AutoRAG
+     5.1  AI & ML Engineers
+     5.2  Data Scientists
+     5.3  Enterprise Team Leads
+     5.4  Independent Developers
+     5.5  Primary Market Segments  [table: Segment | Profile | Why AutoRAG Fits]
+
+06   Business Goals & Metrics
+     6.1  Financial Targets
+          [3 explanatory paragraphs: ACV rationale, ARR math, market context]
+          [table: Target | Value | What It Means]
+          [footnote: market sources]
+     6.2  Revenue Projections  [table: Year | Customers | ARR | Driver + footnote]
+     6.3  Product Quality KPIs  [table: KPI | Target | Measured By]
+     6.4  Expected Efficiency Gains  [table: Dimension | Before | Expected + footnote]
+
+07   Go-To-Market Strategy
+     [table: Phase | Timeline | Motion | Target]
+     7.4  Beachhead Markets  [4 bullets]
+
+08   Pricing & Revenue Model
+     [table: Tier | For | Pricing | Includes]
+     [callout: Configurator free across all tiers]
+
+09   Infrastructure & Cost Constraints
+     9.1  Deployment Architecture  [table: Environment | Infrastructure | Purpose]
+     9.2  Cost Targets  [table: Cost Item | Target]
+
+10   Risks, Assumptions & Sign-Off
+     10.1  Key Business Risks  [table: Risk | Likelihood | Impact | Mitigation]
+     10.2  Strategic Assumptions  [5 bullets]
+     10.3  Approval & Sign-Off  [table: Name | Role | Signature | Date]
+     [divider + footer credits + market data footnote]
+```
+
+---
+
+## PRD STRUCTURE (23 sections, ~32 pages)
+
+Number format: `01`, `1.1`, `1.1.1`
+
+```
+01   Executive Summary
+     1.1  Product Name & Category
+     1.2  7-Agent Architecture  [table: Agent | Technical Role | Priority]
+     1.3  Unified Scoring Formula  [formula block]
+     1.4  Business Impact  [table: Dimension | Before | With AutoRAG]
+
+02   Problem Statement
+     2.1  The Problem  [table: Layer | Challenge]
+     2.2  Current Solutions & Limitations  [table: Approach | Limitation]
+     2.3  Why Now  [3 bullets]
+
+03   Target Users 
+     3.1  AI/ML Engineer
+     3.2  Data Scientist
+     3.3  Enterprise Team Lead
+     3.4  Solo Developer
+     [Each: 1 para context + Goals bullet + Pain Points bullet + Configurator use italic bullet]
+
+04   Product Goals & Success Metrics
+     4.1  AI-Specific KPIs  [table: KPI | Target | Measured By]
+     4.2  Understanding Each KPI
+          4.2.1  Composite Unified Score ≥ 0.80
+          4.2.2  Retrieval Recall@5 ≥ 0.85
+          4.2.3  Answer Quality ≥ 0.80
+          4.2.4  Faithfulness / Hallucination Rate ≥ 0.80
+          4.2.5  Pipeline Build Time < 5 minutes
+          4.2.6  Evaluation Cycle (50 Q&A) < 5 minutes
+          4.2.7  Failure Classification Accuracy ≥ 90%
+          4.2.8  Query Response Time (p95) < 3 seconds
+          [Each: What it measures + Why it matters + How calculated]
+     4.3  Business Goals  [table]
+     4.4  Expected Efficiency Gains  [table + footnote]
+
+05   Scope Definition — MVP
+     5.1  In Scope — P0 Features  [table: Feature | Priority | Description — 14 items]
+     5.2  Out of Scope — MVP  [table: Feature | Reason Deferred — 6 items]
+
+06   System Architecture
+     6.1  Architecture Layers  [table: Layer | Components]
+          [Figure 1: Agent Workflow diagram]
+     6.2  Data Flow  [table: Step 1–9 | Flow]
+
+07   Agentic AI Design
+     7.1  Agent Definitions  [table: Agent | Input | Output | LLM Used]
+     7.2  5 Failure Types — Diagnoser  [table: Type | Definition | Symptom]
+     7.3  Improver Variant Generation Rules  [table: Failure Type | Variants Generated]
+     7.4  Guardrails  [table: Guardrail | Implementation]
+
+08   Feature Breakdown
+     8.1   Ingestion Layer (P0)  [6 bullets]
+     8.2   Builder Agent (P0)  [5 bullets]
+     8.3   RAG Runtime (P0)  [6 bullets]
+     8.4   Evaluator Agent (P0)  [6 bullets + Figure 2: Score Breakdown]
+     8.5   Diagnoser Agent (P0)  [5 bullets]
+     8.6   Improver Agent (P0)  [6 bullets]
+     8.7   Experiment Tracker (P0)  [4 bullets]
+     8.8   FastAPI Service (P0)  [4 bullets]
+     8.9   YAML Pipeline Config (P0)  [3 bullets]
+     8.10  Dashboard UI (P1)  [7 bullets]
+     8.11  Deployer Agent (P1)  [4 bullets]
+     8.12  Feedback Loop (P1)  [4 bullets]
+
+09   Observer Agent — Monitoring & Observability
+     [callout: purpose statement]
+     9.1  Observable Signals  [table: Signal | Metric | Alert Threshold — 9 rows]
+     9.2  AI-Specific Monitoring  [table: Signal | Storage | Frequency — 4 rows]
+     9.3  Key Metrics for Alerting  [table: Metric | Type | Alert Threshold]
+     9.4  Distributed Tracing  [paragraph]
+
+10   Rollback Strategy
+     [callout: versioning principle]
+     10.1  Versioned Pipeline Architecture  [table: Component | Versioning Mechanism]
+     10.2  Auto-Rollback Triggers  [table: Trigger | Condition | Action — 5 rows]
+     10.3  Safe Deploy Protocol  [6 numbered bullets]
+
+11   Improvement Approval Framework
+     [callout: two modes + mandatory gate]
+     11.1  Approval Modes  [table: Mode | Trigger | Behaviour | Target User]
+     11.2  Risk Classification  [table: Change Type | Risk Level | Approval Required — 7 rows]
+     11.3  Approval Workflow  [7 bullets]
+          [Figure 3: Approval Framework diagram]
+
+12   Pipeline Configurator — Feature Spec
+     [callout: no-code principle + model-agnostic note]
+     12.1  User Story  [paragraph]
+     12.2  5-Question Flow & Technical Mapping  [table: # | Question | Technical Output]
+     12.3  Output Schema  [4 bullets: YAML config | scoring weight profile | system prompt | plain-English summary]
+     12.4  Acceptance Criteria  [5 bullets]
+
+13   API & Integration Requirements
+     13.1  Internal API Endpoints  [table: Method | Endpoint | Description — 18 rows]
+     13.2  External Integrations  [table: Service | Purpose | Auth — 3 rows]
+
+14   Data & Storage Design
+     14.1  Storage Architecture  [table: Data Type | Storage | Notes — 9 rows]
+     14.2  Key Database Entities  [table: Table | Key Fields — 11 tables]
+     14.3  Qdrant Vector Store Design  [table: Parameter | Value — 5 rows]
+     14.4  Data Privacy  [4 bullets]
+
+15   Non-Functional Requirements
+     15.1  Performance  [table: Metric | Target — 7 rows]
+     15.2  Security  [table: Layer | Mechanism — 5 rows]
+     15.3  Cost Constraints  [table: Item | Target — 4 rows]
+
+16   AI Safety & Governance
+     16.1  Hallucination Handling  [4 bullets + code block]
+     16.2  Bias Mitigation  [table: Risk | Mitigation]
+     16.3  Compliance  [table: Standard | Status]
+     16.4  Audit Logging  [paragraph + table: Event | Logged Fields — 8 events]
+
+17   Testing Strategy
+     17.1  Unit Testing Coverage Targets  [table: Module | Coverage — 9 rows]
+     17.2  Integration Tests  [5 bullets]
+     17.3  Load Testing  [table: Scenario | Target — 3 rows]
+
+18   Deployment & DevOps
+     18.1  CI/CD Pipeline (GitHub Actions)  [table: Stage | Action — 8 stages]
+     18.2  Environments  [table: Environment | Infrastructure | Purpose — 3 rows]
+
+19   UX & UI Requirements
+     19.1  Design System  [table: Element | Choice — 6 rows]
+     19.2  Screen Inventory (20 Screens)  [table: # | Screen | Route]
+
+20   Timeline & Milestones
+     20.1  2-Week MVP Delivery Plan  [table: Day | Milestone | Deliverables — 11 rows]
+     20.2  Post-MVP Roadmap  [table: Phase | Timeline | Features — 4 phases]
+
+21   Business Model & Pricing
+     [table: Tier | Target | Pricing | Includes]
+     [callout: break-even statement]
+     21.1  Revenue Projections  [table + footnote]
+
+22   Risks & Assumptions
+     22.1  Technical Risks  [table: Risk | Probability | Impact | Mitigation]
+     22.2  AI-Specific Risks  [table: Risk | Probability | Mitigation]
+     22.3  Business Risks  [table]
+     22.4  Assumptions  [5 bullets]
+
+23   Open Questions & Sign-Off
+     23.1  Open Questions  [table: # | Question | Priority | Status — 7 rows]
+     23.2  Approval & Sign-Off  [table: Name | Role | Signature | Date]
+     [divider + footer credits + market data footnote]
+```
+
+---
+
+## KEY CONTENT RULES
+
+### Pipeline Configurator
+- Always described as **model-agnostic** — "Built on AutoRAG's own configuration engine — not dependent on any specific external AI provider"
+- 5 questions → YAML config + scoring weight profile + system prompt template + plain-English summary
+- Included **free across all tiers** including Open Source
+- Available in BRD Section 3.2 and PRD Section 12
+
+### Scoring Formula
+```
+Score = 0.25 × Retrieval + 0.35 × Quality + 0.25 × Faithfulness − 0.10 × Latency − 0.05 × Cost
+```
+- Thresholds: ≥ 0.85 = Production-ready | 0.70–0.84 = Needs improvement | < 0.70 = Below threshold
+
+### Rollback
+- Auto-rollback triggers: score drops > 0.10 | p95 latency > 5s | error rate > 1%
+- Version retention: 30 days
+- Manual rollback: one-click from dashboard or `POST /deploy/rollback`
+
+### Approval Framework
+- Low risk (top_k, temperature, chunk_size) → Auto-Approve
+- Medium risk (retrieval strategy) → Human-in-Loop with 30-min canary
+- High risk (model swap, prompt, embedding) → Mandatory Gate — always human
+
+### Financial Figures
+- ACV: ₹15 Lakhs / year (~$18K USD) — benchmarked vs Weights & Biases, Datadog, LangSmith
+- Year 1 ARR target: ₹1.5 Crore (10 customers × ₹15L)
+- Break-even: 8 customers
+- All figures labelled as internal projections pending pilot validation
+- Market source: MarketsandMarkets RAG Infrastructure Forecast 2023–2028 ($1.2B → $4.7B)
+
+### Efficiency Gains
+- Label as **"Expected / Projected"** — not validated claims
+- Footnote: "To be replaced with pilot customer actuals post-MVP"
+
+### Competitor Comparison Image
+- `Product_comparision.jpeg` placed in BRD Section 04 and PRD not duplicated
+- Caption: *"Figure 4: AutoRAG Solutions — Feature & Capability Comparison (Source: Euron AI Product Engineering 2.0, May 2026)"*
+
+---
+
+## TECHNOLOGY STACK (for PRD technical accuracy)
+
+- **Backend:** Python, FastAPI, Celery, Redis
+- **Vector DB:** Qdrant (one collection per pipeline run: `autorag_run_{id}`)
+- **Storage:** PostgreSQL (metadata + audit), MinIO (documents + chunks)
+- **Embeddings:** OpenAI `text-embedding-3-large` (cloud) or `all-MiniLM-L6-v2` (local)
+- **LLM:** Configured provider — Claude / OpenAI / local (abstracted, not hardcoded)
+- **Experiment tracking:** MLflow + PostgreSQL
+- **Dashboard:** Next.js, Tailwind CSS, shadcn/ui, Recharts
+- **Deployment:** Docker Compose (dev), Kubernetes (staging/prod)
+- **Observability:** OpenTelemetry distributed tracing, X-Trace-ID on all requests
+- **PII:** Presidio scanner at ingestion
+
+---
+
+## OUTPUT REQUIREMENTS
+
+- Format: `.docx` (Microsoft Word)
+- Portrait orientation explicitly set on ALL sections
+- Both documents share the same cover design (different document type label)
+- Both documents share the same 4 generated diagrams
+- Validated with Word XML schema validator before delivery
+- Print-ready, client-facing quality
+- No external fonts required — Calibri is a standard Word font
+
+---
+
+*End of prompt — version as of May 2026*
