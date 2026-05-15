@@ -1,0 +1,788 @@
+AutoRAG — Architecture Document (Draft v1.0)
+
+Based on your PRD for AutoRAG — Self-Improving RAG Platform with Autonomous Knowledge Compression
+
+1. Introduction
+1.1 Purpose
+
+This document defines the high-level system architecture for the AutoRAG platform. It explains the major components, system layers, data flow, infrastructure, integrations, scalability model, and deployment strategy required to build and operate the autonomous closed-loop RAG quality platform.
+
+1.2 System Overview
+
+AutoRAG is a self-improving RAG orchestration platform that:
+
+Builds RAG pipelines
+Evaluates retrieval and answer quality
+Detects degradation automatically
+Diagnoses failure causes
+Generates optimized variants
+Deploys improved pipelines safely
+
+The system operates through a 7-agent closed-loop architecture.
+
+2. Architectural Goals
+Goal	Description
+Autonomous Quality Improvement	System continuously improves RAG quality automatically
+Enterprise Safety	Human approval and rollback mechanisms
+Scalability	Horizontally scalable agent architecture
+Modularity	Independent agent-based services
+Observability	Full AI quality monitoring and auditability
+Multi-Provider Support	Cloud and local model compatibility
+Extensibility	Plugin architecture for retrieval/models/judges
+3. High-Level Architecture
+3.1 Five-Layer Architecture
+
+AutoRAG follows a layered architecture model.
+
+┌──────────────────────────────────────┐
+│         Frontend Layer              │
+│   Next.js Dashboard + Configurator  │
+└──────────────────────────────────────┘
+                    │
+                    ▼
+┌──────────────────────────────────────┐
+│          API Layer                   │
+│ FastAPI REST APIs + Auth Gateway     │
+└──────────────────────────────────────┘
+                    │
+                    ▼
+┌──────────────────────────────────────┐
+│      Async Processing Layer          │
+│      Celery Workers + Redis Queue    │
+└──────────────────────────────────────┘
+                    │
+                    ▼
+┌──────────────────────────────────────┐
+│         Agent Layer                  │
+│ Ingestion / Builder / Evaluator      │
+│ Observer / Diagnoser / Improver      │
+│ Deployer                             │
+└──────────────────────────────────────┘
+                    │
+                    ▼
+┌──────────────────────────────────────┐
+│          Data Layer                  │
+│ PostgreSQL / Qdrant / MinIO          │
+│ MLflow / Redis                       │
+└──────────────────────────────────────┘
+4. Core System Components
+4.1 Frontend Layer
+
+Technology:
+
+Next.js
+Tailwind UI
+Real-time dashboards
+
+Responsibilities:
+
+Pipeline configurator
+Monitoring dashboards
+Experiment tracking
+Approval workflows
+Rollback management
+Audit log viewing
+
+Key Screens:
+
+Configurator Wizard
+Score Dashboard
+Failure Heatmaps
+Approval Queue
+Deployment Timeline
+Cost Dashboard
+4.2 API Layer
+
+Technology:
+
+FastAPI
+JWT Authentication
+OpenAPI Documentation
+
+Responsibilities:
+
+REST API exposure
+Authentication & authorization
+Rate limiting
+Request validation
+Agent orchestration
+
+Key APIs:
+
+/ingest
+/query
+/evaluate
+/diagnose
+/improve
+/deploy
+/rollback
+/configurator
+4.3 Async Processing Layer
+
+Technology:
+
+Celery
+Redis Queue
+
+Responsibilities:
+
+Long-running evaluation jobs
+Improvement generation
+Background monitoring
+Retry handling
+Distributed processing
+
+Benefits:
+
+Non-blocking APIs
+Horizontal scaling
+Resilience against provider failures
+4.4 Agent Layer (7-Agent System)
+4.4.1 Ingestion Agent
+
+Responsibilities:
+
+PDF/HTML/TXT ingestion
+OCR processing
+Table extraction
+Chunking
+PII scanning
+Metadata extraction
+
+Technologies:
+
+pdfplumber
+Camelot
+Tesseract
+Presidio
+4.4.2 Builder Agent
+
+Responsibilities:
+
+Create retrieval pipeline
+Generate embeddings
+Configure vector indexing
+Build retrieval strategies
+
+Supported Models:
+
+OpenAI text-embedding-3-large
+MiniLM-L6-v2 fallback
+4.4.3 Evaluator Agent
+
+Responsibilities:
+
+Generate synthetic Q&A
+Run retrieval evaluation
+Measure faithfulness
+Calculate Unified Score
+
+Core Formula:
+
+Score=0.25×Retrieval+0.35×Quality+0.25×Faithfulness−0.10×Latency−0.05×Cost
+
+4.4.4 Observer Agent
+
+Responsibilities:
+
+Monitor score degradation
+Detect latency spikes
+Detect cost anomalies
+Trigger improvement workflows
+4.4.5 Diagnoser Agent
+
+Responsibilities:
+
+Root-cause classification
+Failure taxonomy analysis
+
+Supported Failure Types:
+
+Retrieval Miss
+Context Overflow
+Hallucination
+Answer Incompleteness
+Latency Spike
+4.4.6 Improver Agent
+
+Responsibilities:
+
+Generate optimized variants
+Tune retrieval parameters
+Tune prompts
+Run comparative experiments
+Recommend improvements
+4.4.7 Deployer Agent
+
+Responsibilities:
+
+Safe deployment
+Blue-green deployment
+Rollback execution
+Health checks
+Version tracking
+5. Data Architecture
+5.1 Storage Architecture
+Storage	Purpose
+PostgreSQL	Metadata, runs, configs, audit logs
+Qdrant	Vector embeddings
+MinIO	Raw documents
+MLflow	Experiment tracking
+Redis	Session state + queues
+
+5.2 Database Design
+PostgreSQL Tables
+Table	Purpose
+pipelines	Pipeline configs
+pipeline_runs	Execution runs
+evaluations	Q&A evaluation data
+experiments	Variant experiments
+deployments	Deployment history
+audit_log	Immutable audit events
+query_logs	Production query logs
+agent_retries	Retry tracking
+
+5.3 Vector Database Design
+
+Technology:
+
+Qdrant
+
+Configuration:
+
+Cosine similarity
+HNSW indexing
+Separate collection per pipeline version
+
+Supported Dimensions:
+
+1536 (OpenAI)
+384 (MiniLM)
+
+6. End-to-End Workflow
+6.1 Pipeline Creation Flow
+User Upload
+    ↓
+Ingestion Agent
+    ↓
+Chunking + OCR + PII Scan
+    ↓
+Builder Agent
+    ↓
+Embedding Generation
+    ↓
+Qdrant Index Creation
+    ↓
+Pipeline Deployment
+6.2 Continuous Improvement Loop
+Production Queries
+        ↓
+Observer Agent
+        ↓
+Quality Degradation Detected
+        ↓
+Diagnoser Agent
+        ↓
+Failure Classification
+        ↓
+Improver Agent
+        ↓
+Variant Generation
+        ↓
+Evaluator Agent
+        ↓
+Approval Workflow
+        ↓
+Deployer Agent
+        ↓
+New Production Version
+7. External Integrations
+Integration	Purpose
+OpenAI	Embeddings + fallback judge
+Anthropic Claude	Primary LLM judge
+HuggingFace MiniLM	Local embeddings
+Presidio	PII detection
+MLflow	Experiment tracking
+Prometheus	Monitoring
+Grafana	Dashboards
+Sentry	Error tracking
+
+8. Security Architecture
+8.1 Authentication
+JWT Bearer Authentication
+X-API-Key support
+TLS 1.3 mandatory
+8.2 Data Security
+AES-256 encryption at rest
+Pipeline-scoped embeddings
+Immutable audit logs
+PII boundary scanning
+Secret masking
+
+9. Resilience & Fault Tolerance
+9.1 Provider Failover
+
+LLM Fallback Chain:
+
+Claude
+   ↓
+GPT-4o
+   ↓
+Local Ollama
+
+Embedding Fallback:
+
+OpenAI Embeddings
+        ↓
+MiniLM
+9.2 Retry Strategy
+Exponential backoff
+Max 3 retries
+Circuit breaker support
+Automatic provider bypass
+
+10. Deployment Architecture
+10.1 Environments
+Environment	Infrastructure
+Development	Docker Compose
+Staging	Single-node Kubernetes
+Production	3-node Kubernetes
+On-Premise	Customer-managed K8s
+
+10.2 Deployment Strategy
+Blue/Green deployment
+Auto rollback
+Health checks
+Immutable Docker images
+GitHub Actions CI/CD
+11. Scalability Design
+Horizontal Scaling
+
+All agents are stateless and scale independently.
+
+Scalable Components:
+
+Celery workers
+FastAPI replicas
+Qdrant shards
+Redis queues
+12. Observability Architecture
+Monitoring Stack
+Tool	Purpose
+Prometheus	Metrics
+Grafana	Visualization
+OpenTelemetry	Distributed tracing
+Sentry	Error tracking
+
+13. AI Governance & Guardrails
+Hard Rules
+Faithfulness < 0.5 blocks deployment
+PII halts ingestion
+Cost ceiling enforcement
+Token ceiling enforcement
+Prompt injection defense
+
+14. Plugin Architecture
+Extensible Interfaces
+Interface	Purpose
+RetrievalStrategy	Plug custom retrieval
+EmbeddingModel	Plug embedding providers
+LLMJudge	Plug evaluation judges
+
+Benefits:
+
+OSS ecosystem support
+Enterprise customization
+Vendor flexibility
+15. Non-Functional Requirements
+Requirement	Target
+Query p95 latency	< 3 sec
+Pipeline build time	< 5 min
+Evaluation cycle	< 5 min
+Dashboard load	< 2 sec
+API uptime	99.5%
+
+16. Future Architecture Enhancements (Phase 2+)
+
+Planned additions:
+
+Multi-model orchestration
+Kubernetes HA clustering
+RBAC + SSO
+Multi-tenant SaaS
+PagerDuty integration
+Advanced LLMOps CT pipelines
+
+17. Conclusion
+
+AutoRAG introduces a new architecture category: Autonomous AI Quality Systems.
+
+The platform combines:
+
+RAG orchestration
+AI evaluation
+Failure diagnosis
+Self-improvement
+Enterprise governance
+Continuous deployment
+
+into a unified closed-loop system designed for scalable enterprise AI operations.
+
+OUTPUT FORMAT
+
+Generate the document in this structure:
+
+Cover Page
+Revision History
+Table of Contents
+1. Executive Summary
+2. Architecture Goals & Principles
+3. System Overview
+4. Business Context Architecture
+5. Solution Architecture
+6. High-Level System Architecture
+7. 7-Agent Architecture
+8. Component Architecture
+9. Data Architecture
+10. Vector Database Architecture
+11. API Architecture
+12. Workflow & Sequence Flows
+13. AI/LLM Architecture
+14. Evaluation Architecture
+15. Observer & Monitoring Architecture
+16. Improvement Loop Architecture
+17. Deployment Architecture
+18. Security Architecture
+19. Governance & Compliance Architecture
+20. Resilience & Failover Architecture
+21. Scalability Architecture
+22. DevOps & CI/CD Architecture
+23. Observability & LLMOps
+24. Plugin & Extensibility Architecture
+25. Environment Architecture
+26. Performance & Non-Functional Design
+27. Technology Stack
+28. Architecture Decision Records (ADRs)
+29. Risks & Mitigations
+30. Future Architecture Roadmap
+31. Conclusion
+Appendix
+CONTENT EXPECTATIONS
+
+The Architecture Document MUST deeply cover:
+
+A. Overall Platform Architecture
+
+Explain:
+
+Five-layer architecture
+Frontend
+API layer
+Async queue layer
+Agent layer
+Data layer
+
+Add:
+
+Enterprise architecture diagram
+Layer interaction diagram
+Request lifecycle diagram
+B. 7-Agent Architecture
+
+Explain each agent in detail:
+
+Ingestion Agent
+Builder Agent
+Evaluator Agent
+Observer Agent
+Diagnoser Agent
+Improver Agent
+Deployer Agent
+
+For EACH agent include:
+
+Responsibilities
+Inputs
+Outputs
+Internal workflows
+APIs used
+Failure handling
+Scaling strategy
+Storage interactions
+Sequence flow
+State transitions
+
+Include:
+
+Agent communication diagram
+Closed-loop workflow diagram
+State machine diagram
+C. Data Architecture
+
+Must include:
+
+PostgreSQL architecture
+Qdrant architecture
+Redis architecture
+MLflow architecture
+MinIO architecture
+
+Include:
+
+Storage responsibility table
+Data lifecycle diagram
+Retention strategy
+Data partitioning
+Indexing strategy
+Backup strategy
+Encryption strategy
+
+Include ER-style database explanations.
+
+D. Vector Database Architecture
+
+Explain:
+
+Qdrant collections
+HNSW indexing
+Embedding dimensions
+Cosine similarity
+Pipeline-isolated vector collections
+Retrieval strategies
+Hybrid retrieval
+Chunk lifecycle
+
+Add:
+
+Vector retrieval flow diagram
+Embedding generation flow
+E. AI/LLM Architecture
+
+Explain:
+
+Claude integration
+OpenAI integration
+MiniLM fallback
+Ollama local inference
+Prompt management
+Structured output enforcement
+JSON schema validation
+Prompt injection defense
+
+Include:
+
+Multi-provider fallback diagram
+LLM orchestration flow
+Judge evaluation flow
+F. Unified Scoring Architecture
+
+Explain:
+
+Score formula
+Scoring pipeline
+Sub-score generation
+Threshold logic
+Improvement triggers
+Domain scoring profiles
+
+Include:
+
+Score computation diagram
+Decision tree diagram
+G. Workflow Architecture
+
+Create detailed workflows for:
+
+Document ingestion
+Pipeline creation
+Evaluation cycle
+Improvement loop
+Approval flow
+Deployment flow
+Rollback flow
+Query lifecycle
+
+Use sequence diagrams heavily.
+
+H. Security Architecture
+
+Explain:
+
+JWT auth
+API keys
+TLS
+Encryption at rest
+PII scanning
+Audit logging
+RBAC future design
+Tenant isolation
+Secret management
+
+Include:
+
+Security boundary diagram
+Trust-zone architecture
+I. Deployment Architecture
+
+Explain:
+
+Docker Compose setup
+Kubernetes production
+Blue/green deployment
+CI/CD pipeline
+GitHub Actions
+GHCR
+Helm deployment
+On-prem deployment
+
+Include:
+
+Infrastructure diagrams
+K8s topology
+Environment topology
+J. Observability & Monitoring
+
+Explain:
+
+Prometheus
+Grafana
+OpenTelemetry
+Sentry
+Observer metrics
+AI quality metrics
+Distributed tracing
+
+Include:
+
+Monitoring architecture diagram
+Trace flow diagram
+K. Resilience & Failover
+
+Explain:
+
+Retry policies
+Circuit breaker
+Provider failover
+Graceful degradation
+Auto rollback
+Recovery strategy
+
+Include:
+
+Failover flow diagrams
+Retry sequence diagrams
+L. Plugin Architecture
+
+Explain:
+
+RetrievalStrategy interface
+EmbeddingModel interface
+LLMJudge interface
+Plugin registry
+Extension lifecycle
+
+Include:
+
+Plugin lifecycle diagram
+Interface dependency diagram
+M. Performance & Scalability
+
+Explain:
+
+Horizontal scaling
+Queue scaling
+Stateless workers
+Vector scaling
+Query optimization
+Caching opportunities
+Bottleneck analysis
+
+Include:
+
+Scaling topology diagrams
+N. Architecture Decision Records
+
+Generate ADRs for:
+
+FastAPI selection
+Qdrant selection
+Celery + Redis
+MLflow
+PostgreSQL
+Next.js
+Multi-agent design
+OpenAI embedding selection
+
+Each ADR must include:
+
+Context
+Decision
+Alternatives
+Consequences
+O. Appendix
+
+Include:
+
+API summary table
+Component inventory
+Environment variables
+Port mappings
+Suggested folder structure
+Naming conventions
+Recommended repo structure
+DIAGRAM REQUIREMENTS
+
+Add diagrams throughout the document using:
+
+Mermaid
+ASCII
+Enterprise architecture style
+Clean professional formatting
+
+Required diagram types:
+
+Architecture diagrams
+Sequence diagrams
+Data flow diagrams
+Deployment diagrams
+Component interaction diagrams
+State machine diagrams
+CI/CD diagrams
+Security diagrams
+Monitoring diagrams
+
+Every diagram must:
+
+Have a title
+Have a description below
+Explain why it matters
+WRITING STYLE
+
+The writing should:
+
+Sound like senior solution architects wrote it
+Be implementation-oriented
+Be technically deep
+Use enterprise terminology
+Avoid casual explanations
+Avoid shallow summaries
+Include rationale for architecture decisions
+IMPORTANT CONSTRAINTS
+STRICTLY derive architecture from PRD.
+Do NOT introduce unrelated technologies.
+Keep all architecture aligned with PRD goals.
+Preserve AutoRAG’s core concept:
+“Closed-loop autonomous RAG quality system.”
+Keep enterprise-safe governance throughout.
+Keep the exact product philosophy from the PRD.
+Include all major PRD capabilities in architecture form.
+Keep terminology consistent with the PRD.
+Include references to:
+Unified Score
+Observer loop
+Diagnoser taxonomy
+Improvement framework
+Rollback engine
+Plugin interfaces
+Governance model
+Ensure the document feels like the natural architectural extension of the PRD.

@@ -1,0 +1,370 @@
+Create a PROFESSIONAL ENTERPRISE HIGH-LEVEL ARCHITECTURE DIAGRAM for an AI platform called:
+
+“AutoRAG — Self-Improving RAG Platform”
+
+━━━━━━━━━━━━━━━━━━
+PRIMARY OBJECTIVE
+━━━━━━━━━━━━━━━━━━
+
+Generate a CLEAN, MODERN, ENTERPRISE-GRADE architecture diagram suitable for:
+
+* technical design reviews
+* architecture documentation
+* investor presentations
+* engineering discussions
+
+The diagram must emphasize:
+
+* autonomous RAG workflows
+* self-improving retrieval systems
+* scalable AI architecture
+* observability
+* resilience
+* deployment automation
+
+━━━━━━━━━━━━━━━━━━
+CRITICAL LAYOUT RULES
+━━━━━━━━━━━━━━━━━━
+
+MANDATORY:
+
+* Use STRICT LEFT-TO-RIGHT horizontal architecture flow
+* Avoid overlapping arrows COMPLETELY
+* Use ONLY orthogonal (90-degree) connectors
+* Keep connectors short and clean
+* Maintain generous whitespace
+* Use grouped containers for each layer
+* Keep labels short and readable
+* Use ONE primary directional flow
+* Minimize arrow crossings
+* Do NOT create dense mesh connections
+* Do NOT connect every component to every component
+* Keep the layout visually balanced
+* Maintain enterprise readability
+
+Preferred flow:
+
+[ Users ]
+→
+[ Frontend ]
+→
+[ API Layer ]
+→
+[ Async Processing ]
+→
+[ 7-Agent System ]
+→
+[ Data + AI Layer ]
+
+Place SUPPORTING SYSTEMS BELOW the main flow:
+
+* Observability
+* Deployment
+* Resilience
+
+━━━━━━━━━━━━━━━━━━
+SECTION 1 — USERS
+━━━━━━━━━━━━━━━━━━
+
+Create a small left-side section titled:
+“Users”
+
+Include:
+
+* End Users
+* Browser Clients
+* API Clients
+
+━━━━━━━━━━━━━━━━━━
+SECTION 2 — FRONTEND LAYER
+━━━━━━━━━━━━━━━━━━
+
+Create a grouped container titled:
+“Frontend Layer”
+
+Include vertically aligned components:
+
+* Next.js 14 Dashboard
+* Configurator UI
+* Monitoring Dashboard
+* Real-Time Score Cards
+* Tailwind + shadcn/ui
+
+Show ONE clean arrow to API Layer.
+
+━━━━━━━━━━━━━━━━━━
+SECTION 3 — API & ORCHESTRATION
+━━━━━━━━━━━━━━━━━━
+
+Create grouped container:
+“API & Orchestration”
+
+Include:
+
+* FastAPI Gateway
+* Authentication Layer
+* REST APIs
+* Request Router
+* OpenAPI Docs
+* Pydantic Validation
+* Job Status APIs
+
+Show:
+
+* API ingress
+* orchestration flow
+* request dispatching
+
+Use minimal arrows only.
+
+━━━━━━━━━━━━━━━━━━
+SECTION 4 — ASYNC PROCESSING
+━━━━━━━━━━━━━━━━━━
+
+Create grouped container:
+“Async Processing”
+
+Include vertically:
+
+* Celery Workers
+* Redis Queue
+* Retry Logic
+* Async Task Executor
+* Job Status Tracking
+
+Show:
+
+* task dispatch
+* queue communication
+* retries
+
+Keep arrows simple and linear.
+
+━━━━━━━━━━━━━━━━━━
+SECTION 5 — 7-AGENT CLOSED LOOP
+━━━━━━━━━━━━━━━━━━
+
+Create ONE LARGE grouped container titled:
+“7-Agent Closed Loop Architecture”
+
+Arrange agents in a SIMPLE LINEAR FLOW.
+
+Use SMALL compact boxes.
+
+Flow:
+
+Ingestion
+→
+Builder
+→
+Evaluator
+→
+Observer
+→
+Diagnoser
+→
+Improver
+→
+Deployer
+
+Add ONLY ONE feedback loop:
+Deployer → Observer
+
+Do NOT create multiple circular arrows.
+
+Agent responsibilities:
+
+1. Ingestion Agent
+
+* document ingestion
+* chunking
+* PII scanning
+
+2. Builder Agent
+
+* embedding generation
+* Qdrant indexing
+* retrieval pipeline creation
+
+3. Evaluator Agent
+
+* synthetic QA generation
+* retrieval scoring
+* hallucination detection
+* faithfulness scoring
+
+4. Observer Agent
+
+* production monitoring
+* score drift detection
+* latency tracking
+
+5. Diagnoser Agent
+
+* root cause analysis
+* ranking failure analysis
+
+6. Improver Agent
+
+* prompt optimization
+* retrieval tuning
+* chunk optimization
+
+7. Deployer Agent
+
+* blue/green deployment
+* rollback management
+
+━━━━━━━━━━━━━━━━━━
+SECTION 6 — DATA & AI LAYER
+━━━━━━━━━━━━━━━━━━
+
+Split into TWO grouped containers.
+
+A. DATA LAYER
+Include:
+
+* PostgreSQL 15
+* Qdrant Vector DB
+* Redis 7
+* MinIO Object Storage
+* MLflow Tracking
+
+Responsibilities:
+
+* PostgreSQL → metadata/configs
+* Qdrant → vector search
+* Redis → cache/queue
+* MinIO → documents/chunks
+* MLflow → experiments
+
+B. AI / LLM PROVIDER LAYER
+Include:
+
+* Claude Sonnet 4 (Primary)
+* OpenAI GPT-4o (Fallback)
+* Ollama Local Models
+* OpenAI text-embedding-3-large
+* HuggingFace MiniLM
+
+Show ONLY these minimal arrows:
+
+* Builder → Qdrant
+* Evaluator → LLMs
+* Improver → LLMs
+
+Show fallback chain:
+Claude → GPT-4o → Ollama
+
+Show embedding fallback:
+OpenAI Embeddings → MiniLM
+
+━━━━━━━━━━━━━━━━━━
+SECTION 7 — OBSERVABILITY
+━━━━━━━━━━━━━━━━━━
+
+Place BELOW the main architecture.
+
+Create grouped container:
+“Observability & Monitoring”
+
+Include:
+
+* Prometheus
+* Grafana
+* OpenTelemetry
+* Sentry
+
+Show ONE shared monitoring arrow upward to the platform.
+
+Do NOT create multiple monitoring arrows.
+
+━━━━━━━━━━━━━━━━━━
+SECTION 8 — DEPLOYMENT & CI/CD
+━━━━━━━━━━━━━━━━━━
+
+Place BELOW architecture near bottom-right.
+
+Create grouped container:
+“Deployment & CI/CD”
+
+Include:
+
+* Docker
+* Kubernetes
+* Helm Charts
+* GitHub Actions
+* GHCR Registry
+
+Show ONE deployment pipeline arrow only.
+
+Include:
+
+* blue/green deployment
+* automated rollout
+* rollback support
+
+━━━━━━━━━━━━━━━━━━
+SECTION 9 — RESILIENCE & FAILOVER
+━━━━━━━━━━━━━━━━━━
+
+Place as horizontal footer section.
+
+Create grouped container:
+“Resilience & Failover”
+
+Include:
+
+* Retry Policy
+* Circuit Breaker
+* LLM Failover
+* Embedding Failover
+* Retrieval Fallback
+* Auto Rollback
+
+NO internal arrows required.
+
+━━━━━━━━━━━━━━━━━━
+MAIN FLOWS TO VISUALIZE
+━━━━━━━━━━━━━━━━━━
+
+Use clean directional arrows for:
+
+1. Document ingestion flow
+2. Query retrieval flow
+3. Evaluation pipeline
+4. Autonomous improvement loop
+5. Deployment workflow
+6. Monitoring feedback loop
+
+━━━━━━━━━━━━━━━━━━
+VISUAL STYLE REQUIREMENTS
+━━━━━━━━━━━━━━━━━━
+
+Use:
+
+* modern enterprise architecture style
+* dark theme
+* subtle color separation by layer
+* thin clean connectors
+* evenly aligned containers
+* consistent spacing
+* readable typography
+* minimal clutter
+* enterprise-grade aesthetics
+
+Avoid:
+
+* overlapping arrows
+* curved chaotic connectors
+* excessive labels
+* crowded sections
+* dense relationship meshes
+* unnecessary technical details
+
+Focus on:
+SIMPLICITY
+READABILITY
+ENTERPRISE DESIGN
+CLEAN FLOWS
+ARCHITECTURE CLARITY
